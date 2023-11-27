@@ -1,11 +1,9 @@
 import React from "react";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes/index";
 
 const App = () => {
-  return (
-    <div>
-      <h1>Quiz Pulse</h1>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;

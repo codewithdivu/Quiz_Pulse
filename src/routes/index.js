@@ -7,6 +7,13 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import NotFound from "../pages/Page404";
 import DashboardLayout from "../layouts/dashboard/DashboardLayout";
 import AdminLayout from "../layouts/admin/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import CategoryList from "../pages/admin/dashboard/category/CategoryList";
+import CreateCategory from "../pages/admin/dashboard/category/CreateCategory";
+import QuizList from "../pages/admin/dashboard/quiz/QuizList";
+import CreateQuiz from "../pages/admin/dashboard/quiz/CreateQuiz";
+import CreateQuestion from "../pages/admin/dashboard/question/CreateQuestion";
+import QuestionList from "../pages/admin/dashboard/question/QuestionList";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -67,7 +74,28 @@ export const router = createBrowserRouter([
         element: <Navigate to="home" replace />,
         index: true,
       },
-      { path: "home", element: <h1>admin home page</h1> },
+      { path: "home", element: <AdminDashboard /> },
+      {
+        path: "quiz",
+        children: [
+          { path: "list", element: <QuizList /> },
+          { path: "new", element: <CreateQuiz /> },
+        ],
+      },
+      {
+        path: "question",
+        children: [
+          { path: "list", element: <QuestionList /> },
+          { path: "new", element: <CreateQuestion /> },
+        ],
+      },
+      {
+        path: "category",
+        children: [
+          { path: "list", element: <CategoryList /> },
+          { path: "new", element: <CreateCategory /> },
+        ],
+      },
     ],
   },
 ]);

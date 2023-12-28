@@ -1,10 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+import Navbar from "../../components/Navbar";
 
 const DashboardLayout = () => {
   return (
     <div>
-      <h1>Navbar</h1>
+      <Navbar />
       <Outlet />
     </div>
   );

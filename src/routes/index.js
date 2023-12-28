@@ -14,6 +14,9 @@ import QuizList from "../pages/admin/dashboard/quiz/QuizList";
 import CreateQuiz from "../pages/admin/dashboard/quiz/CreateQuiz";
 import CreateQuestion from "../pages/admin/dashboard/question/CreateQuestion";
 import QuestionList from "../pages/admin/dashboard/question/QuestionList";
+import QuizDashboard from "../pages/dashboard/QuizDashboard";
+import GuestGuard from "../guards/GuestGuard";
+import AuthGuard from "../guards/AuthGuard";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -37,32 +40,53 @@ export const router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <Login />,
+        element: (
+          <GuestGuard>
+            <Login />
+          </GuestGuard>
+        ),
       },
       {
         path: "register",
-        element: <Register />,
+        element: (
+          <GuestGuard>
+            <Register />
+          </GuestGuard>
+        ),
       },
       {
         path: "forgot-password",
-        element: <ForgotPassword />,
+        element: (
+          <GuestGuard>
+            <ForgotPassword />
+          </GuestGuard>
+        ),
       },
       {
         path: "reset-password",
-        element: <ResetPassword />,
+        element: (
+          <GuestGuard>
+            <ResetPassword />
+          </GuestGuard>
+        ),
       },
     ],
   },
 
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <AuthGuard>
+        <DashboardLayout />
+      </AuthGuard>
+    ),
+
     children: [
       {
         element: <Navigate to="home" replace />,
         index: true,
       },
-      { path: "home", element: <h1>home page</h1> },
+      { path: "home", element: <QuizDashboard /> },
     ],
   },
 

@@ -12,13 +12,17 @@ export const axiosPost = async (
         "Content-Type": contentType,
       },
     });
-    response.data = result.data;
+    return result;
+
     response.success = result.success;
     response.msg = result.msg;
+    response.data = result.data;
   } catch (e) {
     response.success = false;
     response.msg = "something went wrong";
     response.data = e;
+    // response = { ...e };
+    return e;
   }
   return response;
 };

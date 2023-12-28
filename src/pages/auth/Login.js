@@ -12,15 +12,17 @@ import {
   useMediaQuery,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axiosInstance from "../../services/axios";
 import { apiRouter } from "../../services/apisRouter.";
+import useAuth from "../../hooks/useAuth";
 
 const RootStyle = styled("div")(({ theme }) => ({
   [theme.breakpoints.up("md")]: {
@@ -64,10 +66,14 @@ const ContentStyle = styled("div")(({ theme }) => ({
 }));
 
 const Login = () => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const mdUp = useMediaQuery(theme.breakpoints.up("md"));
   const smUp = useMediaQuery(theme.breakpoints.up("sm"));
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { login } = useAuth();
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -97,12 +103,15 @@ const Login = () => {
   });
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
-      const res = await axiosInstance.post(apiRouter.LOGIN, { ...data });
-      console.log("res :>> ", res);
+      const res = await login({ ...data });
+      setIsLoading(false);
+      navigate("/dashboard");
       reset();
     } catch (error) {
       console.log("loginErrors :>> ", error);
+      setIsLoading(false);
     }
   };
 
@@ -204,7 +213,11 @@ const Login = () => {
               </Link>
             </Stack>
             <Button fullWidth variant="contained" sx={{ my: 2 }} type="submit">
-              Login
+              {isLoading ? (
+                <CircularProgress sx={{ color: "white" }} />
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
 

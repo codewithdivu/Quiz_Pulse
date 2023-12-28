@@ -1,7 +1,8 @@
 import { createContext, useEffect, useReducer } from "react";
-import { apiRouter, axiosPost } from "../services";
+import { apiRouter, axiosGet, axiosPost } from "../services";
 import axios from "../services/axios";
 import setSession from "../utils/setSession";
+import { jwtDecode } from "jwt-decode";
 
 const initialState = {
   isAuthenticated: false,
@@ -77,13 +78,17 @@ function AuthProvider({ children }) {
           : null;
 
         if (accessToken) {
-          const payload = JSON.parse(accessToken);
           setSession(accessToken);
-          const response = await axiosPost(apiRouter.GET_PROFILE, payload);
-          const { success, ...rest } = response;
 
-          if (success) {
-            accessUser = rest;
+          const decoded = jwtDecode(accessToken);
+
+          const response = await axiosGet(apiRouter.GET_USER, {
+            id: decoded?.userId,
+          });
+          const { data } = response;
+
+          if (data?.data) {
+            accessUser = data?.data;
           }
 
           dispatch({
@@ -118,30 +123,30 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (payload) => {
-    const response = await axiosPost(apiRouter.GET_PROFILE, payload);
-    const { message, success, ...rest } = response;
-    if (!success) {
-      console.log(message);
+    const response = await axiosPost(apiRouter.LOGIN, payload);
+    console.log("response :>> ", response);
+    const { data } = response;
+    if (!data?.data) {
+      console.log(data.msg);
       return;
     }
-    if (success) {
-      setSession(JSON.stringify(payload));
-      localStorage.setItem("authUser", JSON.stringify(rest));
+    if (data?.data) {
+      setSession(data.accessToken);
+      localStorage.setItem("authUser", JSON.stringify(data.data));
       dispatch({
         type: "LOGIN",
         payload: {
-          user: rest,
+          user: data.data,
         },
       });
     }
   };
 
-  const register = async (email, password, firstName, lastName) => {
-    const response = await axios.post("/api/account/register", {
+  const register = async (email, password, username) => {
+    const response = await axios.post(apiRouter.REGISTER, {
       email,
       password,
-      firstName,
-      lastName,
+      username,
     });
     const { accessToken, user } = response.data;
 

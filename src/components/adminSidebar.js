@@ -16,8 +16,11 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { Box, Tooltip } from "@mui/material";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const AdminSidebar = () => {
+  const { isAuthenticated, logout } = useAuth();
+
   const { collapseSidebar, toggleSidebar, collapsed, toggled, broken, rtl } =
     useProSidebar();
 
@@ -28,6 +31,13 @@ const AdminSidebar = () => {
   const handleItemClick = (itemName) => {
     setSelectedItem(itemName);
   };
+
+  const handleAdminLogout = async () => {
+    await logout();
+    navigate("/auth/admin/login");
+  };
+
+  console.log();
 
   return (
     <Sidebar>
@@ -205,6 +215,7 @@ const AdminSidebar = () => {
               <LogoutRoundedIcon />
             </Tooltip>
           }
+          onClick={handleAdminLogout}
         >
           Logout
         </MenuItem>

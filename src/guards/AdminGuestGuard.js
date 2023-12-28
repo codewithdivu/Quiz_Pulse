@@ -1,11 +1,11 @@
 import { Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
-export default function GuestGuard({ children }) {
+export default function AdminGuestGuard({ children }) {
   const { isAuthenticated, user } = useAuth();
 
-  if (isAuthenticated && user?.role === "user") {
-    return <Navigate to="/dashboard" />;
+  if (isAuthenticated && user?.role === "admin") {
+    return <Navigate to="/admin" />;
   }
 
   return <>{children}</>;

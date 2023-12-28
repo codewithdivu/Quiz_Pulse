@@ -17,6 +17,9 @@ import QuestionList from "../pages/admin/dashboard/question/QuestionList";
 import QuizDashboard from "../pages/dashboard/QuizDashboard";
 import GuestGuard from "../guards/GuestGuard";
 import AuthGuard from "../guards/AuthGuard";
+import AdminLogin from "../pages/auth/AdminLogin";
+import AdminAuthGuard from "../guards/AdminAuthGuard";
+import AdminGuestGuard from "../guards/AdminGuestGuard";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -28,6 +31,25 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/dashboard" />,
+  },
+
+  {
+    path: "/auth/admin",
+    element: <AuthLayout />,
+    children: [
+      {
+        element: <Navigate to="login" replace />,
+        index: true,
+      },
+      {
+        path: "login",
+        element: (
+          <AdminGuestGuard>
+            <AdminLogin />
+          </AdminGuestGuard>
+        ),
+      },
+    ],
   },
 
   {
@@ -92,7 +114,12 @@ export const router = createBrowserRouter([
 
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: (
+      <AdminAuthGuard>
+        <AdminLayout />
+      </AdminAuthGuard>
+    ),
+
     children: [
       {
         element: <Navigate to="home" replace />,

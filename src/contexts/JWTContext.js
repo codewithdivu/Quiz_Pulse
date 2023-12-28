@@ -124,7 +124,6 @@ function AuthProvider({ children }) {
 
   const login = async (payload) => {
     const response = await axiosPost(apiRouter.LOGIN, payload);
-    console.log("response :>> ", response);
     const { data } = response;
     if (!data?.data) {
       console.log(data.msg);
@@ -142,19 +141,12 @@ function AuthProvider({ children }) {
     }
   };
 
-  const register = async (email, password, username) => {
-    const response = await axios.post(apiRouter.REGISTER, {
-      email,
-      password,
-      username,
-    });
-    const { accessToken, user } = response.data;
-
-    window.localStorage.setItem("accessToken", accessToken);
+  const register = async (data) => {
+    const response = await axios.post(apiRouter.REGISTER, { ...data });
     dispatch({
       type: "REGISTER",
       payload: {
-        user,
+        user: "",
       },
     });
   };

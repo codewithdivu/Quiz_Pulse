@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -21,6 +22,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axiosInstance from "../../services/axios";
 import { apiRouter } from "../../services/apisRouter.";
+import axios from "axios";
+import { axiosPost } from "../../services/axios.config";
 
 const RootStyle = styled("div")(({ theme }) => ({
   display: "flex",
@@ -49,6 +52,7 @@ const ResetPassword = () => {
   const smUp = useMediaQuery(theme.breakpoints.up("sm"));
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -114,16 +118,39 @@ const ResetPassword = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("forgot-data :>> ", data);
+    console.log("reset-data :>> ", data);
+    const {
+      email,
+      password,
+      confirmPassword,
+      digit1,
+      digit2,
+      digit3,
+      digit4,
+      digit5,
+      digit6,
+    } = data;
+    const otp = digit1 + digit2 + digit3 + digit4 + digit5 + digit6;
+    let newOtp = +otp;
 
-    navigate("/auth/login");
-    // try {
-    //   const res = await axiosInstance.post(apiRouter.LOGIN, { ...data });
-    //   console.log("res :>> ", res);
-    //   reset();
-    // } catch (error) {
-    //   console.log("loginErrors :>> ", error);
-    // }
+    const newData = {
+      email,
+      newPassword: confirmPassword,
+      otp: newOtp,
+    };
+    console.log("newData :>> ", newData);
+    setIsLoading(true);
+    try {
+      const response = await axiosPost(apiRouter.RESET_PASSWORD, {
+        ...newData,
+      });
+      setIsLoading(false);
+      navigate("/auth/login");
+    } catch (error) {
+      console.log("reset-password-error :>> ", error);
+      setIsLoading(false);
+      alert("please do it again");
+    }
   };
 
   return (
@@ -232,7 +259,7 @@ const ResetPassword = () => {
               </Stack>
             </Stack>
             <Button fullWidth variant="contained" sx={{ my: 2 }} type="submit">
-              Forgot Password
+              {isLoading ? <CircularProgress /> : "Reset Password"}
             </Button>
           </form>
 

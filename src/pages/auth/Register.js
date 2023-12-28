@@ -12,15 +12,17 @@ import {
   useMediaQuery,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { apiRouter } from "../../services/apisRouter.";
 import axiosInstance from "../../services/axios";
+import useAuth from "../../hooks/useAuth";
 
 const RootStyle = styled("div")(({ theme }) => ({
   [theme.breakpoints.up("md")]: {
@@ -68,6 +70,9 @@ const Register = () => {
   const mdUp = useMediaQuery(theme.breakpoints.up("md"));
   const smUp = useMediaQuery(theme.breakpoints.up("sm"));
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { register: userRegister } = useAuth();
+  const navigate = useNavigate();
 
   const validationSchema = yup.object().shape({
     username: yup.string().required("username is required"),
@@ -99,12 +104,16 @@ const Register = () => {
   });
 
   const onSubmit = async (data) => {
+    console.log("dataRegister :>> ", data);
+    setIsLoading(true);
     try {
-      const res = await axiosInstance.post(apiRouter.REGISTER, { ...data });
-      console.log("res :>> ", res);
+      const res = await userRegister(data);
+      setIsLoading(false);
+      navigate("/auth");
       reset();
     } catch (error) {
-      console.log("loginErrors :>> ", error);
+      console.log("registerErrors :>> ", error);
+      setIsLoading(false);
     }
   };
 
@@ -198,7 +207,11 @@ const Register = () => {
               />
             </Stack>
             <Button fullWidth variant="contained" sx={{ my: 2 }} type="submit">
-              Register
+              {isLoading ? (
+                <CircularProgress sx={{ color: "white" }} />
+              ) : (
+                "Register"
+              )}
             </Button>
           </form>
 

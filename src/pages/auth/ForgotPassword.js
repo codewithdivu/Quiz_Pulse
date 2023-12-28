@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,6 +22,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axiosInstance from "../../services/axios";
 import { apiRouter } from "../../services/apisRouter.";
+import axios from "axios";
+import { axiosPost } from "../../services/axios.config";
 
 const RootStyle = styled("div")(({ theme }) => ({
   display: "flex",
@@ -44,10 +47,7 @@ const HeaderStyle = styled("header")(({ theme }) => ({
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const mdUp = useMediaQuery(theme.breakpoints.up("md"));
-  const smUp = useMediaQuery(theme.breakpoints.up("sm"));
-  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -73,15 +73,17 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data) => {
     console.log("forgot-data :>> ", data);
+    setIsLoading(true);
+    try {
+      // const response = await axios.post(apiRouter.FORGOT_PASSWORD, { ...data });
+      const response = await axiosPost(apiRouter.FORGOT_PASSWORD, { ...data });
+      setIsLoading(false);
+      navigate("/auth/reset-password");
+    } catch (error) {
+      console.log("forgot-password-error :>> ", error);
+      setIsLoading(false);
+    }
 
-    navigate("/auth/reset-password");
-    // try {
-    //   const res = await axiosInstance.post(apiRouter.LOGIN, { ...data });
-    //   console.log("res :>> ", res);
-    //   reset();
-    // } catch (error) {
-    //   console.log("loginErrors :>> ", error);
-    // }
   };
 
   return (
@@ -113,7 +115,7 @@ const ForgotPassword = () => {
               />
             </Stack>
             <Button fullWidth variant="contained" sx={{ my: 2 }} type="submit">
-              Forgot Password
+            {isLoading ? <CircularProgress /> : "Forgot Password"}
             </Button>
           </form>
 

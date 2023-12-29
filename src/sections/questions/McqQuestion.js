@@ -20,15 +20,11 @@ const Question = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(2),
   width: "70vw",
 }));
-function McqQuestion({ question }) {
+function McqQuestion({ question, selectedOption, handleOptionChange }) {
   const theme = useTheme();
   const md = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
 
   return (
     <Container>

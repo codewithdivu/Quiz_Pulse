@@ -20,6 +20,8 @@ import AuthGuard from "../guards/AuthGuard";
 import AdminLogin from "../pages/auth/AdminLogin";
 import AdminAuthGuard from "../guards/AdminAuthGuard";
 import AdminGuestGuard from "../guards/AdminGuestGuard";
+import QuizPage from "../pages/dashboard/quiz/QuizPage";
+import QuizResult from "../pages/dashboard/quiz/QuizResult";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -31,25 +33,6 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/dashboard" />,
-  },
-
-  {
-    path: "/auth/admin",
-    element: <AuthLayout />,
-    children: [
-      {
-        element: <Navigate to="login" replace />,
-        index: true,
-      },
-      {
-        path: "login",
-        element: (
-          <AdminGuestGuard>
-            <AdminLogin />
-          </AdminGuestGuard>
-        ),
-      },
-    ],
   },
 
   {
@@ -102,13 +85,39 @@ export const router = createBrowserRouter([
         <DashboardLayout />
       </AuthGuard>
     ),
-
     children: [
       {
         element: <Navigate to="home" replace />,
         index: true,
       },
       { path: "home", element: <QuizDashboard /> },
+      {
+        path: "test/:quizId",
+        element: <QuizPage />,
+      },
+      {
+        path: "test/:quizId/:userId",
+        element: <QuizResult />,
+      },
+    ],
+  },
+
+  {
+    path: "/auth/admin",
+    element: <AuthLayout />,
+    children: [
+      {
+        element: <Navigate to="login" replace />,
+        index: true,
+      },
+      {
+        path: "login",
+        element: (
+          <AdminGuestGuard>
+            <AdminLogin />
+          </AdminGuestGuard>
+        ),
+      },
     ],
   },
 

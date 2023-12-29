@@ -3,7 +3,6 @@ import useAuth from "../hooks/useAuth";
 
 export default function AuthGuard({ children }) {
   const { isAuthenticated, user } = useAuth();
-
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" />;
   } else if (isAuthenticated && user.role === "user") {
@@ -11,6 +10,5 @@ export default function AuthGuard({ children }) {
   } else {
     return <Navigate to="/auth/login" />;
   }
-
-  return <>{children}</>;
+  // return <>{children}</>;
 }

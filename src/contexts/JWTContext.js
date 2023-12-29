@@ -82,9 +82,12 @@ function AuthProvider({ children }) {
 
           const decoded = jwtDecode(accessToken);
 
-          const response = await axiosGet(apiRouter.GET_USER, {
-            id: decoded?.userId,
-          });
+          const response = await axiosGet(
+            apiRouter.GET_USER.replace(":id", decoded?.userId),
+            {
+              id: decoded?.userId,
+            }
+          );
           const { data } = response;
 
           if (data?.data) {

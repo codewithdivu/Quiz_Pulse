@@ -1,25 +1,47 @@
 import {
   Box,
+  Breadcrumbs,
   Button,
   Chip,
+  CircularProgress,
   Container,
   FormControl,
   FormHelperText,
   Grid,
   IconButton,
   InputLabel,
+  Link,
   MenuItem,
   Select,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAuth from "../../../../hooks/useAuth";
+import { apiRouter, axiosGet, axiosPost } from "../../../../services";
 
 const CreateQuestion = () => {
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesResponse = await axiosGet(apiRouter.GET_CATEGORY_LIST);
+        setCategories(categoriesResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const validationSchema = yup.object().shape({
     type: yup
       .string()
@@ -70,6 +92,7 @@ const CreateQuestion = () => {
   };
 
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
@@ -85,12 +108,45 @@ const CreateQuestion = () => {
     name: "options",
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
+    setIsLoading(true);
+    try {
+      const response = await axiosPost(apiRouter.CREATE_QUESTION, {
+        ...data,
+        createdBy: user?._id,
+      });
+      console.log("QuestionResponse :>> ", response);
+      reset();
+      setIsLoading(false);
+    } catch (error) {
+      console.log("questionCreateError :>> ", error);
+      setIsLoading(false);
+    }
   };
   return (
     <Container>
-      <Box sx={{ marginTop: "5rem" }}>
+      <Box sx={{ marginTop: "6rem" }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Question Creation
+        </Typography>
+        <Stack spacing={2} sx={{ marginTop: "1rem" }}>
+          <Breadcrumbs separator="-" aria-label="breadcrumb">
+            <Link
+              underline="hover"
+              key="1"
+              color="inherit"
+            >
+              Question
+            </Link>
+            <Typography key="3" color="text.primary">
+              Create
+            </Typography>
+            ,{" "}
+          </Breadcrumbs>
+        </Stack>
+      </Box>
+      <Box sx={{ marginTop: "2rem" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={6}>
@@ -132,9 +188,11 @@ const CreateQuestion = () => {
                 fullWidth
                 margin="normal"
               >
-                <MenuItem value="easy">hr</MenuItem>
-                <MenuItem value="medium">sdf</MenuItem>
-                <MenuItem value="hard">sdfsd</MenuItem>
+                {categories.map((category) => (
+                  <MenuItem key={category._id} value={category._id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -283,7 +341,11 @@ const CreateQuestion = () => {
             <Grid item xs={12} sm={12} md={6}></Grid>
             <Grid item xs={12} sm={12} md={12}>
               <Button type="submit" fullWidth variant="contained">
-                Create Question
+                {isLoading ? (
+                  <CircularProgress sx={{ color: "white" }} />
+                ) : (
+                  "Create Question"
+                )}{" "}
               </Button>
             </Grid>
           </Grid>

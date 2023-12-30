@@ -18,7 +18,7 @@ const settings = ["Profile", "Dashboard", "Logout"];
 
 function Navbar() {
   const navigate = useNavigate();
-  const { logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -30,6 +30,8 @@ function Navbar() {
     if (val === "Logout") {
       await logout();
       navigate("/auth/login");
+    } else if (val === "Profile") {
+      navigate("/dashboard/profile");
     }
   };
 
@@ -80,7 +82,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={user?.username} src={user?.profile_pic} />
               </IconButton>
             </Tooltip>
             <Menu

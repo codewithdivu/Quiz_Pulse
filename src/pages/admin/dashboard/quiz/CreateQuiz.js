@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -20,18 +20,41 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
+  duration,
 } from "@mui/material";
-import { apiRouter, axiosGet, axiosPost } from "../../../../services";
+import { apiRouter, axiosGet, axiosPatch, axiosPost } from "../../../../services";
 import useAuth from "../../../../hooks/useAuth";
-import { Link } from "react-router-dom";
-
-const questions = ["Question 1", "Question 2", "Question 3"]; // Replace with your actual questions
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 const CreateQuiz = () => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { id } = useParams();
+  const isEdit = pathname.includes("edit");
+  const [currentQuiz, setCurrentQuiz] = useState();
+
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
-  // console.log("fetchedQuestions :>> ", fetchedQuestions);
+  const [isFetching, setIsFetching] = useState(false);
+
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      setIsFetching(true);
+      if (id && isEdit) {
+        try {
+          const res = await axiosGet(apiRouter.GET_QUIZ.replace(":id", id));
+          setCurrentQuiz(res?.data?.data);
+          setIsFetching(false);
+        } catch (error) {
+          console.log("error :>> ", error);
+          setIsFetching(false);
+        }
+      }
+      setIsFetching(false);
+    };
+    fetchQuiz();
+  }, [isEdit]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -60,14 +83,17 @@ const CreateQuiz = () => {
     isActive: yup.boolean().required("isActive is required"),
   });
 
-  const defaultValues = {
-    title: "",
-    description: "",
-    difficultyLevel: "",
-    questions: [],
-    duration: 0,
-    isActive: false,
-  };
+  const defaultValues = useMemo(
+    () => ({
+      title: currentQuiz?.title || "",
+      description: currentQuiz?.description || "",
+      difficultyLevel: currentQuiz?.difficultyLevel || "",
+      questions: currentQuiz?.questions || [],
+      duration: currentQuiz?.duration || 0,
+      isActive: currentQuiz?.isActive || false,
+    }),
+    [isEdit, currentQuiz, id]
+  );
 
   const {
     reset,
@@ -96,6 +122,28 @@ const CreateQuiz = () => {
     const filteredQuestions = questions?.filter((item) => item !== "false");
 
     setIsLoading(true);
+    if (isEdit) {
+      try {
+        const response = await axiosPatch(
+          apiRouter.UPDATE_QUIZ.replace(":id", id),
+          {
+            title,
+            description,
+            difficultyLevel,
+            questions: [...filteredQuestions],
+            duration,
+            isActive,
+          }
+        );
+        reset();
+        navigate("/admin/quiz/list");
+        setIsLoading(false);
+      } catch (error) {
+        console.log("categoryCreateError :>> ", error);
+        setIsLoading(false);
+      }
+      return;
+    }
     try {
       const response = await axiosPost(apiRouter.CREATE_QUIZ, {
         title,
@@ -115,23 +163,27 @@ const CreateQuiz = () => {
     }
   };
 
+  useEffect(() => {
+    if (isEdit) {
+      reset({ ...defaultValues });
+    } else {
+      reset({ ...defaultValues });
+    }
+  }, [isEdit, defaultValues]);
+
   return (
     <Container>
       <Box sx={{ marginTop: "6rem" }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Question Creation
+          {isEdit ? "Quiz Updation" : "Quiz Creation"}{" "}
         </Typography>
         <Stack spacing={2} sx={{ marginTop: "1rem" }}>
           <Breadcrumbs separator="-" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              key="1"
-              color="inherit"
-            >
-              Question
+            <Link underline="hover" key="1" color="inherit">
+              Quiz
             </Link>
             <Typography key="3" color="text.primary">
-              Create
+              {isEdit ? "Update" : "create"}
             </Typography>
             ,{" "}
           </Breadcrumbs>
@@ -239,6 +291,8 @@ const CreateQuiz = () => {
               >
                 {isLoading ? (
                   <CircularProgress sx={{ color: "white" }} />
+                ) : isEdit ? (
+                  "Update Quiz"
                 ) : (
                   "Create Quiz"
                 )}

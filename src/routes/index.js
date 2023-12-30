@@ -22,6 +22,7 @@ import AdminAuthGuard from "../guards/AdminAuthGuard";
 import AdminGuestGuard from "../guards/AdminGuestGuard";
 import QuizPage from "../pages/dashboard/quiz/QuizPage";
 import QuizResult from "../pages/dashboard/quiz/QuizResult";
+import Profile from "../pages/dashboard/profile/Profile";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -91,6 +92,8 @@ export const router = createBrowserRouter([
         index: true,
       },
       { path: "home", element: <QuizDashboard /> },
+      { path: "profile", element: <Profile /> },
+
       {
         path: "test/:quizId",
         element: <QuizPage />,
@@ -140,6 +143,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "list", element: <QuizList /> },
           { path: "new", element: <CreateQuiz /> },
+          { path: "edit/:id", element: <CreateQuiz /> },
         ],
       },
       {
@@ -147,6 +151,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "list", element: <QuestionList /> },
           { path: "new", element: <CreateQuestion /> },
+          { path: "edit/:id", element: <CreateQuestion /> },
         ],
       },
       {
@@ -154,6 +159,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "list", element: <CategoryList /> },
           { path: "new", element: <CreateCategory /> },
+          { path: "edit/:id", element: <CreateCategory /> },
         ],
       },
     ],

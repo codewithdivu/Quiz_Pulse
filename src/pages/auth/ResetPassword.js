@@ -95,7 +95,6 @@ const ResetPassword = () => {
   });
 
   const defaultValues = {
-    email: "",
     password: "",
     confirmPassword: "",
     digit1: "",

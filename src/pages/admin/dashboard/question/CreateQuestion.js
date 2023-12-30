@@ -17,18 +17,49 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAuth from "../../../../hooks/useAuth";
-import { apiRouter, axiosGet, axiosPost } from "../../../../services";
+import {
+  apiRouter,
+  axiosGet,
+  axiosPatch,
+  axiosPost,
+} from "../../../../services";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const CreateQuestion = () => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { id } = useParams();
+  const isEdit = pathname.includes("edit");
+  const [currentQuestion, setCurrentQuestion] = useState();
+
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      setIsFetching(true);
+      if (id && isEdit) {
+        try {
+          const res = await axiosGet(apiRouter.GET_QUESTION.replace(":id", id));
+          setCurrentQuestion(res?.data?.data);
+          setIsFetching(false);
+        } catch (error) {
+          console.log("error :>> ", error);
+          setIsFetching(false);
+        }
+      }
+      setIsFetching(false);
+    };
+    fetchQuestion();
+  }, [isEdit]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -76,20 +107,23 @@ const CreateQuestion = () => {
       })
     ),
   });
-  const defaultValues = {
-    type: "",
-    difficultyLevel: "",
-    category: "",
-    tags: [],
-    description: "",
-    points: 0,
-    question: {
-      type: "",
-      text: "",
-    },
-    correct_answer: "",
-    options: [{ type: "", text: "" }],
-  };
+  const defaultValues = useMemo(
+    () => ({
+      type: currentQuestion?.type || "",
+      difficultyLevel: currentQuestion?.difficultyLevel || "",
+      category: currentQuestion?.category || "",
+      tags: currentQuestion?.tags || [],
+      description: currentQuestion?.description || "",
+      points: currentQuestion?.points || 0,
+      question: {
+        type: currentQuestion?.question?.type || "",
+        text: currentQuestion?.question?.text || "",
+      },
+      correct_answer: currentQuestion?.correct_answer || "",
+      options: currentQuestion?.options || [{ type: "", text: "" }],
+    }),
+    [isEdit, currentQuestion, id]
+  );
 
   const {
     reset,
@@ -111,6 +145,23 @@ const CreateQuestion = () => {
   const onSubmit = async (data) => {
     console.log(data);
     setIsLoading(true);
+    if (isEdit) {
+      try {
+        const response = await axiosPatch(
+          apiRouter.UPDATE_QUESTION.replace(":id", id),
+          {
+            ...data,
+          }
+        );
+        reset();
+        navigate("/admin/question/list");
+        setIsLoading(false);
+      } catch (error) {
+        console.log("questionEditError :>> ", error);
+        setIsLoading(false);
+      }
+      return;
+    }
     try {
       const response = await axiosPost(apiRouter.CREATE_QUESTION, {
         ...data,
@@ -124,23 +175,28 @@ const CreateQuestion = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isEdit) {
+      reset({ ...defaultValues });
+    } else {
+      reset({ ...defaultValues });
+    }
+  }, [isEdit, defaultValues]);
+
   return (
     <Container>
       <Box sx={{ marginTop: "6rem" }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Question Creation
+          {isEdit ? "Question Updation" : "Question Creation"}{" "}
         </Typography>
         <Stack spacing={2} sx={{ marginTop: "1rem" }}>
           <Breadcrumbs separator="-" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              key="1"
-              color="inherit"
-            >
+            <Link underline="hover" key="1" color="inherit">
               Question
             </Link>
             <Typography key="3" color="text.primary">
-              Create
+              {isEdit ? "Update" : "create"}
             </Typography>
             ,{" "}
           </Breadcrumbs>
@@ -343,9 +399,11 @@ const CreateQuestion = () => {
               <Button type="submit" fullWidth variant="contained">
                 {isLoading ? (
                   <CircularProgress sx={{ color: "white" }} />
+                ) : isEdit ? (
+                  "Update Question"
                 ) : (
                   "Create Question"
-                )}{" "}
+                )}
               </Button>
             </Grid>
           </Grid>

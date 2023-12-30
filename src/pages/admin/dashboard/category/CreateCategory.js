@@ -101,6 +101,7 @@ const CreateCategory = () => {
       });
       reset();
       setIsLoading(false);
+      navigate("/admin/category/list");
     } catch (error) {
       console.log("categoryCreateError :>> ", error);
       setIsLoading(false);

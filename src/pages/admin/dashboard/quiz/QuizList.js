@@ -21,6 +21,7 @@ import {
   Button,
   Stack,
   Breadcrumbs,
+  Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -32,9 +33,12 @@ import { apiRouter } from "../../../../services/apisRouter.";
 import { Link } from "react-router-dom";
 import QuizTableRow from "../../../../sections/admin/quiz/QuizTableRow";
 
-const fetchDataFromApi = async () => {
-  const response = await axiosGet(apiRouter.GET_QUIZ_LIST);
-  const data = response?.data?.data;
+const fetchDataFromApi = async (currentPage, rowsPerPage) => {
+  const response = await axiosGet(apiRouter.GET_QUIZ_LIST, {
+    page: currentPage,
+    pageSize: rowsPerPage,
+  });
+  const data = response?.data;
   return data;
 };
 
@@ -212,15 +216,18 @@ export default function QuizList() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchDataFromApi();
-      setRows(data);
+      const data = await fetchDataFromApi(currentPage, rowsPerPage);
+      setRows(data?.data);
+      setTotalCount(data?.totalPages);
     };
 
     fetchData();
-  }, [rows]);
+  }, [rows, currentPage]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -310,7 +317,7 @@ export default function QuizList() {
       <Box sx={{ width: "100%", marginTop: "2rem" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar
-            numSelected={selected.length}
+            numSelected={selected?.length}
             handleDelete={() => handleDelete(selected)}
           />
           <TableContainer>
@@ -320,16 +327,16 @@ export default function QuizList() {
               size={dense ? "small" : "medium"}
             >
               <EnhancedTableHead
-                numSelected={selected.length}
+                numSelected={selected?.length}
                 order={order}
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={rows?.length}
               />
               <TableBody>
                 {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     const isItemSelected = isSelected(row?._id);
 
@@ -345,15 +352,21 @@ export default function QuizList() {
               </TableBody>
             </Table>
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              padding: "1rem",
+            }}
+          >
+            <Pagination
+              count={totalCount}
+              page={currentPage}
+              variant="outlined"
+              shape="rounded"
+              onChange={(e, newPage) => setCurrentPage(newPage)}
+            />
+          </Box>
         </Paper>
         <FormControlLabel
           control={<Switch checked={dense} onChange={handleChangeDense} />}

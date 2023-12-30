@@ -22,7 +22,12 @@ import {
   Breadcrumbs,
   duration,
 } from "@mui/material";
-import { apiRouter, axiosGet, axiosPatch, axiosPost } from "../../../../services";
+import {
+  apiRouter,
+  axiosGet,
+  axiosPatch,
+  axiosPost,
+} from "../../../../services";
 import useAuth from "../../../../hooks/useAuth";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -37,6 +42,9 @@ const CreateQuiz = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [isQuestionsFetching, setIsQuestionsFetching] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [choosenCategory, setChoosenCategory] = useState();
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -57,16 +65,42 @@ const CreateQuiz = () => {
   }, [isEdit]);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchCategories = async () => {
       try {
-        const questionsResponse = await axiosGet(apiRouter.GET_QUESTION_LIST);
-        setFetchedQuestions(questionsResponse.data.data);
+        const categoriesResponse = await axiosGet(apiRouter.GET_CATEGORY_LIST);
+        setCategories(categoriesResponse.data.data);
       } catch (error) {
-        console.error("Error fetching questions:", error);
+        console.error("Error fetching categories:", error);
       }
     };
-    fetchQuestions();
+    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      setIsQuestionsFetching(true);
+      try {
+        const questionsResponse = await axiosGet(apiRouter.GET_QUESTION_LIST);
+        if (!choosenCategory) {
+          setFetchedQuestions(questionsResponse.data.data);
+          setIsQuestionsFetching(false);
+        } else {
+          const filteredQuestions =
+            choosenCategory &&
+            questionsResponse?.data?.data?.filter(
+              (item) => item?.category === choosenCategory
+            );
+          setFetchedQuestions(filteredQuestions);
+          setIsQuestionsFetching(false);
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+        setIsQuestionsFetching(false);
+      }
+      setIsQuestionsFetching(false);
+    };
+    fetchQuestions();
+  }, [choosenCategory]);
 
   const schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -157,6 +191,7 @@ const CreateQuiz = () => {
       console.log("QuizResponse :>> ", response);
       reset();
       setIsLoading(false);
+      navigate("/admin/quiz/list");
     } catch (error) {
       console.log("quizCreateError :>> ", error);
       setIsLoading(false);
@@ -242,6 +277,22 @@ const CreateQuiz = () => {
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
+              <TextField
+                label="Categories"
+                select
+                fullWidth
+                margin="normal"
+                value={choosenCategory}
+                onChange={(e) => setChoosenCategory(e.target.value)}
+              >
+                {categories?.map((category) => (
+                  <MenuItem key={category._id} value={category._id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6}>
               <FormControlLabel
                 control={
                   <Controller
@@ -260,27 +311,31 @@ const CreateQuiz = () => {
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12}>
-              <Paper
-                elevation={3}
-                style={{ maxHeight: 250, overflowY: "auto", padding: 16 }}
-              >
-                <FormControl fullWidth margin="normal">
-                  {/* <InputLabel>Questions</InputLabel> */}
-                  {fetchedQuestions.map((question, index) => (
-                    <FormControlLabel
-                      key={index}
-                      control={
-                        <Checkbox
-                          {...register(`questions[${index}]`)}
-                          value={question?._id}
-                        />
-                      }
-                      label={question?.question?.text}
-                    />
-                  ))}
-                  {errors.questions && <div>{errors.questions.message}</div>}
-                </FormControl>
-              </Paper>
+              {isQuestionsFetching ? (
+                <CircularProgress size="large" />
+              ) : (
+                <Paper
+                  elevation={3}
+                  style={{ maxHeight: 250, overflowY: "auto", padding: 16 }}
+                >
+                  <InputLabel>Questions</InputLabel>
+                  <FormControl fullWidth margin="normal">
+                    {fetchedQuestions?.map((question, index) => (
+                      <FormControlLabel
+                        key={index}
+                        control={
+                          <Checkbox
+                            {...register(`questions[${index}]`)}
+                            value={question?._id}
+                          />
+                        }
+                        label={question?.question?.text}
+                      />
+                    ))}
+                    {errors.questions && <div>{errors.questions.message}</div>}
+                  </FormControl>
+                </Paper>
+              )}
             </Grid>
             <Grid item xs={12} sm={12} md={12}>
               <Button

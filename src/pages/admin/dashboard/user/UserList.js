@@ -30,11 +30,12 @@ import { visuallyHidden } from "@mui/utils";
 import axios from "axios";
 import { axiosDelete, axiosGet } from "../../../../services/axios.config";
 import { apiRouter } from "../../../../services/apisRouter.";
-import { Link } from "react-router-dom";
-import QuestionTableRow from "../../../../sections/admin/questions/QuestionTableRow";
+import { Link, useNavigate } from "react-router-dom";
+import CategoryTableRow from "../../../../sections/admin/category/CategoryTableRow";
+import UserTableRow from "../../../../sections/admin/user/UserTableRow";
 
 const fetchDataFromApi = async (currentPage, rowsPerPage) => {
-  const response = await axiosGet(apiRouter.GET_QUESTION_LIST, {
+  const response = await axiosGet(apiRouter.GET_ALL_USERS, {
     page: currentPage,
     pageSize: rowsPerPage,
   });
@@ -70,19 +71,19 @@ function EnhancedTableHead(props) {
           />
         </TableCell>
         <TableCell
-          key="title"
+          key="username"
           align="left"
           padding="none"
-          sortDirection={orderBy === "title" ? order : false}
+          sortDirection={orderBy === "username" ? order : false}
         >
           <TableSortLabel
-            active={orderBy === "title"}
-            direction={orderBy === "title" ? order : "asc"}
-            onClick={createSortHandler("title")}
+            active={orderBy === "username"}
+            direction={orderBy === "username" ? order : "asc"}
+            onClick={createSortHandler("username")}
             sx={{ fontWeight: "bold" }}
           >
-            Title
-            {orderBy === "title" ? (
+            Username
+            {orderBy === "username" ? (
               <Box component="span" sx={visuallyHidden}>
                 {order === "desc" ? "sorted descending" : "sorted ascending"}
               </Box>
@@ -90,19 +91,19 @@ function EnhancedTableHead(props) {
           </TableSortLabel>
         </TableCell>
         <TableCell
-          key="points"
+          key="email"
           align="left"
           padding="normal"
-          sortDirection={orderBy === "points" ? order : false}
+          sortDirection={orderBy === "email" ? order : false}
         >
           <TableSortLabel
-            active={orderBy === "points"}
-            direction={orderBy === "points" ? order : "asc"}
-            onClick={createSortHandler("points")}
+            active={orderBy === "email"}
+            direction={orderBy === "email" ? order : "asc"}
+            onClick={createSortHandler("email")}
             sx={{ fontWeight: "bold" }}
           >
-            Points
-            {orderBy === "points" ? (
+            Email
+            {orderBy === "email" ? (
               <Box component="span" sx={visuallyHidden}>
                 {order === "desc" ? "sorted descending" : "sorted ascending"}
               </Box>
@@ -110,19 +111,19 @@ function EnhancedTableHead(props) {
           </TableSortLabel>
         </TableCell>
         <TableCell
-          key="correctAnswer"
+          key="phoneNumber"
           align="left"
           padding="normal"
-          sortDirection={orderBy === "correctAnswer" ? order : false}
+          sortDirection={orderBy === "phoneNumber" ? order : false}
         >
           <TableSortLabel
-            active={orderBy === "correctAnswer"}
-            direction={orderBy === "correctAnswer" ? order : "asc"}
-            onClick={createSortHandler("correctAnswer")}
+            active={orderBy === "phoneNumber"}
+            direction={orderBy === "phoneNumber" ? order : "asc"}
+            onClick={createSortHandler("phoneNumber")}
             sx={{ fontWeight: "bold" }}
           >
-            Correct Answer
-            {orderBy === "correctAnswer" ? (
+            Phone Number
+            {orderBy === "phoneNumber" ? (
               <Box component="span" sx={visuallyHidden}>
                 {order === "desc" ? "sorted descending" : "sorted ascending"}
               </Box>
@@ -130,19 +131,39 @@ function EnhancedTableHead(props) {
           </TableSortLabel>
         </TableCell>
         <TableCell
-          key="edit"
+          key="firstName"
           align="left"
           padding="normal"
-          sortDirection={orderBy === "edit" ? order : false}
+          sortDirection={orderBy === "firstName" ? order : false}
         >
           <TableSortLabel
-            active={orderBy === "edit"}
-            direction={orderBy === "edit" ? order : "asc"}
-            onClick={createSortHandler("edit")}
+            active={orderBy === "firstName"}
+            direction={orderBy === "firstName" ? order : "asc"}
+            onClick={createSortHandler("firstName")}
             sx={{ fontWeight: "bold" }}
           >
-            Edit
-            {orderBy === "edit" ? (
+            First Name
+            {orderBy === "firstName" ? (
+              <Box component="span" sx={visuallyHidden}>
+                {order === "desc" ? "sorted descending" : "sorted ascending"}
+              </Box>
+            ) : null}
+          </TableSortLabel>
+        </TableCell>
+        <TableCell
+          key="lastName"
+          align="left"
+          padding="normal"
+          sortDirection={orderBy === "lastName" ? order : false}
+        >
+          <TableSortLabel
+            active={orderBy === "lastName"}
+            direction={orderBy === "lastName" ? order : "asc"}
+            onClick={createSortHandler("lastName")}
+            sx={{ fontWeight: "bold" }}
+          >
+            Last Name
+            {orderBy === "lastName" ? (
               <Box component="span" sx={visuallyHidden}>
                 {order === "desc" ? "sorted descending" : "sorted ascending"}
               </Box>
@@ -187,7 +208,7 @@ function EnhancedTableToolbar(props) {
           id="tableTitle"
           component="div"
         >
-          Questions
+          Categories
         </Typography>
       )}
 
@@ -208,7 +229,7 @@ function EnhancedTableToolbar(props) {
   );
 }
 
-export default function QuestionList() {
+export default function UserList() {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
   const [selected, setSelected] = useState([]);
@@ -251,9 +272,9 @@ export default function QuestionList() {
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected?.slice(1));
-    } else if (selectedIndex === selected?.length - 1) {
-      newSelected = newSelected.concat(selected?.slice(0, -1));
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
@@ -279,18 +300,20 @@ export default function QuestionList() {
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const handleDelete = (selected) => {
-    try {
-      for (const id of selected) {
-        const res = axiosDelete(apiRouter.DELETE_QUESTION.replace(":id", id));
-      }
-      // setRows((prevRows) =>
-      //   prevRows.filter((row) => !selected.includes(row.id))
-      // );
+    console.log("delte :>> ", selected);
 
-      setSelected([]);
-    } catch (error) {
-      console.log("error :>> ", error);
-    }
+    // try {
+    //   for (const id of selected) {
+    //     const res = axiosDelete(apiRouter.replace(":id", id));
+    //   }
+    //   // setRows((prevRows) =>
+    //   //   prevRows.filter((row) => !selected.includes(row.id))
+    //   // );
+
+    //   setSelected([]);
+    // } catch (error) {
+    //   console.log("error :>> ", error);
+    // }
     setSelected([]);
   };
 
@@ -298,12 +321,12 @@ export default function QuestionList() {
     <Container>
       <Box sx={{ marginTop: "6rem" }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Question List
+          User List
         </Typography>
         <Stack spacing={2} sx={{ marginTop: "1rem" }}>
           <Breadcrumbs separator="-" aria-label="breadcrumb">
             <Link underline="hover" key="1" color="inherit">
-              Question
+              User
             </Link>
             <Typography key="3" color="text.primary">
               List
@@ -315,7 +338,7 @@ export default function QuestionList() {
       <Box sx={{ width: "100%", marginTop: "2rem" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar
-            numSelected={selected.length}
+            numSelected={selected?.length}
             handleDelete={() => handleDelete(selected)}
           />
           <TableContainer>
@@ -334,13 +357,13 @@ export default function QuestionList() {
               />
               <TableBody>
                 {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    const isItemSelected = isSelected(row._id);
+                    const isItemSelected = isSelected(row?._id);
 
                     return (
-                      <QuestionTableRow
-                        key={row._id}
+                      <UserTableRow
+                        key={row?._id}
                         row={row}
                         isItemSelected={isItemSelected}
                         handleClick={handleClick}

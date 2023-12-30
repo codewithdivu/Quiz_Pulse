@@ -21,6 +21,7 @@ import {
   Button,
   Stack,
   Breadcrumbs,
+  Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -32,9 +33,12 @@ import { apiRouter } from "../../../../services/apisRouter.";
 import { Link, useNavigate } from "react-router-dom";
 import CategoryTableRow from "../../../../sections/admin/category/CategoryTableRow";
 
-const fetchDataFromApi = async () => {
-  const response = await axiosGet(apiRouter.GET_CATEGORY_LIST);
-  const data = response?.data?.data;
+const fetchDataFromApi = async (currentPage, rowsPerPage) => {
+  const response = await axiosGet(apiRouter.GET_CATEGORY_LIST, {
+    page: currentPage,
+    pageSize: rowsPerPage,
+  });
+  const data = response?.data;
   return data;
 };
 
@@ -186,22 +190,24 @@ function EnhancedTableToolbar(props) {
 
 export default function CategoryList() {
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("calories");
+  const [orderBy, setOrderBy] = useState("title");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
-  const navigate = useNavigate();
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchDataFromApi();
-      setRows(data);
+      const data = await fetchDataFromApi(currentPage, rowsPerPage);
+      setRows(data?.data);
+      setTotalCount(data?.totalPages);
     };
 
     fetchData();
-  }, [rows]);
+  }, [rows, currentPage]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -259,9 +265,9 @@ export default function CategoryList() {
       for (const id of selected) {
         const res = axiosDelete(apiRouter.DELETE_CATEGORY.replace(":id", id));
       }
-      // setRows((prevRows) =>
-      //   prevRows.filter((row) => !selected.includes(row.id))
-      // );
+      setRows((prevRows) =>
+        prevRows.filter((row) => !selected.includes(row.id))
+      );
 
       setSelected([]);
     } catch (error) {
@@ -291,7 +297,7 @@ export default function CategoryList() {
       <Box sx={{ width: "100%", marginTop: "2rem" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar
-            numSelected={selected.length}
+            numSelected={selected?.length}
             handleDelete={() => handleDelete(selected)}
           />
           <TableContainer>
@@ -301,7 +307,7 @@ export default function CategoryList() {
               size={dense ? "small" : "medium"}
             >
               <EnhancedTableHead
-                numSelected={selected.length}
+                numSelected={selected?.length}
                 order={order}
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
@@ -310,13 +316,13 @@ export default function CategoryList() {
               />
               <TableBody>
                 {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     const isItemSelected = isSelected(row._id);
 
                     return (
                       <CategoryTableRow
-                        key={row._id}
+                        key={row?._id}
                         row={row}
                         isItemSelected={isItemSelected}
                         handleClick={handleClick}
@@ -326,15 +332,22 @@ export default function CategoryList() {
               </TableBody>
             </Table>
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              padding: "1rem",
+            }}
+          >
+            <Pagination
+              count={totalCount}
+              page={currentPage}
+              variant="outlined"
+              shape="rounded"
+              onChange={(e, newPage) => setCurrentPage(newPage)}
+            />
+          </Box>
         </Paper>
         <FormControlLabel
           control={<Switch checked={dense} onChange={handleChangeDense} />}

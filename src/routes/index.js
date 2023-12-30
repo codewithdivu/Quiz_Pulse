@@ -23,6 +23,7 @@ import AdminGuestGuard from "../guards/AdminGuestGuard";
 import QuizPage from "../pages/dashboard/quiz/QuizPage";
 import QuizResult from "../pages/dashboard/quiz/QuizResult";
 import Profile from "../pages/dashboard/profile/Profile";
+import UserList from "../pages/admin/dashboard/user/UserList";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -138,6 +139,10 @@ export const router = createBrowserRouter([
         index: true,
       },
       { path: "home", element: <AdminDashboard /> },
+      {
+        path: "user",
+        children: [{ path: "list", element: <UserList /> }],
+      },
       {
         path: "quiz",
         children: [

@@ -9,12 +9,17 @@ const AdminDashboard = () => {
   const [questions, setQuestions] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   const [users, setUsers] = useState([]);
+  const [totalCategories, setTotalCategories] = useState();
+  const [totalQuestions, setTotalQuestions] = useState();
+  const [totalQuizzes, setTotalQuizzes] = useState();
+  const [totalUsers, setTotalUsers] = useState();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const categoriesResponse = await axiosGet(apiRouter.GET_CATEGORY_LIST);
         setCategories(categoriesResponse.data.data);
+        setTotalCategories(categoriesResponse?.data?.count);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -23,6 +28,7 @@ const AdminDashboard = () => {
       try {
         const questionsResponse = await axiosGet(apiRouter.GET_QUESTION_LIST);
         setQuestions(questionsResponse.data.data);
+        setTotalQuestions(questionsResponse.data.count);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
@@ -31,6 +37,7 @@ const AdminDashboard = () => {
       try {
         const quizzesResponse = await axiosGet(apiRouter.GET_QUIZ_LIST);
         setQuizzes(quizzesResponse.data.data);
+        setTotalQuizzes(quizzesResponse.data.count);
       } catch (error) {
         console.error("Error fetching quizzes:", error);
       }
@@ -39,6 +46,7 @@ const AdminDashboard = () => {
       try {
         const usersResponse = await axiosGet(apiRouter.GET_ALL_USERS);
         setUsers(usersResponse.data.data);
+        setTotalUsers(usersResponse.data.count);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -59,7 +67,7 @@ const AdminDashboard = () => {
           <AppWidgetSummary
             title="Total Users"
             percent={-0.1}
-            total={users?.length || 0}
+            total={totalUsers || 0}
             chartColor={"red"}
             chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
           />
@@ -68,7 +76,7 @@ const AdminDashboard = () => {
           <AppWidgetSummary
             title="Total Quiz"
             percent={-0.1}
-            total={quizzes?.length || 0}
+            total={totalQuizzes || 0}
             chartColor={"red"}
             chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
           />
@@ -77,7 +85,7 @@ const AdminDashboard = () => {
           <AppWidgetSummary
             title="Total Questions"
             percent={-0.1}
-            total={questions?.length || 0}
+            total={totalQuestions || 0}
             chartColor={"red"}
             chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
           />
@@ -86,7 +94,7 @@ const AdminDashboard = () => {
           <AppWidgetSummary
             title="Total Categories"
             percent={-0.1}
-            total={categories?.length || 0}
+            total={totalCategories || 0}
             chartColor={"red"}
             chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
           />

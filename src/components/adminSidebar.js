@@ -14,6 +14,7 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import CategoryIcon from "@mui/icons-material/Category";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import PersonIcon from "@mui/icons-material/Person";
 import { Box, Tooltip } from "@mui/material";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -74,6 +75,24 @@ const AdminSidebar = () => {
           }}
         >
           Dashboard
+        </MenuItem>
+        <MenuItem
+          icon={
+            <Tooltip title="Users" placement="right">
+              <PersonIcon />
+            </Tooltip>
+          }
+          active={selectedItem === "Users"}
+          onClick={() => {
+            handleItemClick("Users");
+            navigate("user/list");
+          }}
+          style={{
+            backgroundColor:
+              selectedItem === "Users" ? "#f4f6fa" : "transparent",
+          }}
+        >
+          Users
         </MenuItem>
 
         <SubMenu

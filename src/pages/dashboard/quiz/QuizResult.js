@@ -6,16 +6,22 @@ import {
   Grid,
   Paper,
   Typography,
+  Card,
+  CardContent,
 } from "@mui/material";
 import { Chart } from "react-google-charts";
 import { useParams } from "react-router-dom";
 import { apiRouter, axiosPost } from "../../../services";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import ScoreIcon from "@mui/icons-material/Score";
+import FeedbackModal from "../../../components/models/FeedbackModel";
 
 const QuizResult = () => {
   const { userId, quizId } = useParams();
   const [resultData, setResultData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isFeedbackSubmitting, setIsFeedbackSubmitting] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   useEffect(() => {
     const fetchScore = async () => {
       setIsLoading(true);
@@ -41,8 +47,31 @@ const QuizResult = () => {
       }
       setIsLoading(false);
     };
+    const showFeedbackModalAfterDelay = () => {
+      setTimeout(() => {
+        setShowFeedbackModal(true);
+      }, 10000);
+    };
     fetchScore();
+    showFeedbackModalAfterDelay();
   }, [userId, quizId]);
+
+  const handleFeedbackSubmit = async (data) => {
+    try {
+      if (data?.ratings == "" || data?.comments == "") {
+        return alert("please kindly submit the feedback");
+      }
+      const res = await axiosPost(apiRouter.SUBMIT_FEEDBACK, {
+        ...data,
+        userId,
+        quizId,
+      });
+      setShowFeedbackModal(false);
+    } catch (error) {
+      console.log("error :>> ", error);
+      setIsFeedbackSubmitting(false);
+    }
+  };
 
   return (
     <Container>
@@ -56,6 +85,50 @@ const QuizResult = () => {
         <CircularProgress size="large" />
       ) : resultData && Object.keys(resultData).length > 0 ? (
         <Grid container spacing={3}>
+          <Grid item xs={12} sm={12} md={12}>
+            <Card sx={{ display: "flex", justifyContent: "center" }}>
+              <CardContent>
+                <Typography
+                  variant="h5"
+                  component="div"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <AssessmentIcon fontSize="large" />
+                  <span style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
+                    Score:{" "}
+                  </span>{" "}
+                  {resultData?.score}
+                </Typography>
+
+                <Typography
+                  variant="h5"
+                  component="div"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <ScoreIcon fontSize="large" />
+                  <span style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
+                    Max Score:{" "}
+                  </span>
+                  {resultData?.maxScore}
+                </Typography>
+
+                <Typography
+                  variant="h5"
+                  component="div"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <AssessmentIcon fontSize="large" />
+                  <span style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
+                    Percentage:{" "}
+                  </span>
+                  {resultData?.percentage}%
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
           <Grid item xs={12} sm={12} md={6}>
             <Paper elevation={3}>
               <Typography variant="h6" align="center" gutterBottom>
@@ -168,6 +241,13 @@ const QuizResult = () => {
           No data available for charts.
         </Typography>
       )}
+
+      <FeedbackModal
+        open={showFeedbackModal}
+        setOpen={setShowFeedbackModal}
+        handleFeedbackSubmit={handleFeedbackSubmit}
+        isFeedbackSubmitting={isFeedbackSubmitting}
+      />
     </Container>
   );
 };

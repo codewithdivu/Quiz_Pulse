@@ -1,6 +1,5 @@
 import ReactApexChart from "react-apexcharts";
-import { alpha, useTheme, styled } from "@mui/material/styles";
-import { Box, Card, Typography, Stack } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 
 export default function AppWidgetSummary({
   title,

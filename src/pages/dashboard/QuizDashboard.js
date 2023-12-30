@@ -12,6 +12,8 @@ import {
 import useAuth from "../../hooks/useAuth";
 import { apiRouter, axiosGet } from "../../services";
 import { useNavigate } from "react-router-dom";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const QuizDashboard = () => {
   const navigate = useNavigate();
@@ -40,24 +42,34 @@ const QuizDashboard = () => {
       <Box
         sx={{
           marginTop: "1rem",
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Quizzes
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          marginTop: "1rem",
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Quizzes
-        </Typography>
         <Button
           variant="outlined"
           onClick={() => navigate("/dashboard/leaderboard")}
+          endIcon={<LeaderboardIcon />}
+          sx={{ textTransform: "none" }}
         >
           Leaderboard
         </Button>
         <Button
           variant="outlined"
           onClick={() => navigate("/dashboard/profileDashboard")}
+          endIcon={<DashboardIcon />}
+          sx={{ textTransform: "none" }}
         >
           Profile Dashboard
         </Button>

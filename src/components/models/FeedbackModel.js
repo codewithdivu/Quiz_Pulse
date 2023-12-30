@@ -53,9 +53,6 @@ const FeedbackModal = ({
         </div>
       </DialogContent>
       <DialogActions>
-        {/* <Button onClick={() => setOpen(false)} color="secondary">
-          Cancel
-        </Button> */}
         <Button
           onClick={() => handleFeedbackSubmit({ rating, comments })}
           color="primary"

@@ -16,12 +16,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import axiosInstance from "../../services/axios";
-import { apiRouter } from "../../services/apisRouter.";
 import useAuth from "../../hooks/useAuth";
 
 const RootStyle = styled("div")(({ theme }) => ({
@@ -118,8 +116,15 @@ const AdminLogin = () => {
   return (
     <RootStyle>
       <HeaderStyle>
-        <Box sx={{ width: 8, height: 8 }}>
-          {/* <img src="/logo/normalLogo.png" alt="LOGO" /> */}
+        <Box sx={{ width: 18, height: 8 }}>
+          <img
+            src="/logo/normalLogo.png"
+            alt="LOGO"
+            style={{
+              height: "4rem",
+              width: "15rem",
+            }}
+          />
         </Box>
       </HeaderStyle>
 

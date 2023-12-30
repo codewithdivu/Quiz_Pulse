@@ -20,8 +20,6 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { apiRouter } from "../../services/apisRouter.";
-import axiosInstance from "../../services/axios";
 import useAuth from "../../hooks/useAuth";
 
 const RootStyle = styled("div")(({ theme }) => ({
@@ -120,11 +118,16 @@ const Register = () => {
   return (
     <RootStyle>
       <HeaderStyle>
-        {/* <Link to={"/"}> */}
-        <Box sx={{ width: 8, height: 8 }}>
-          {/* <img src="/logo/normalLogo.png" alt="LOGO" /> */}
+        <Box sx={{ width: 18, height: 8 }}>
+          <img
+            src="/logo/normalLogo.png"
+            alt="LOGO"
+            style={{
+              height: "4rem",
+              width: "15rem",
+            }}
+          />
         </Box>
-        {/* </Link> */}
         {smUp && (
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
             Already have account?{" "}

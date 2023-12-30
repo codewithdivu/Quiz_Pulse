@@ -12,18 +12,16 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import QuizIcon from "@mui/icons-material/Quiz";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import CategoryIcon from "@mui/icons-material/Category";
-import FeedbackIcon from "@mui/icons-material/Feedback";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import PersonIcon from "@mui/icons-material/Person";
-import { Box, Tooltip } from "@mui/material";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Tooltip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 const AdminSidebar = () => {
   const { isAuthenticated, logout } = useAuth();
 
-  const { collapseSidebar, toggleSidebar, collapsed, toggled, broken, rtl } =
-    useProSidebar();
+  const { collapseSidebar } = useProSidebar();
 
   const navigate = useNavigate();
 

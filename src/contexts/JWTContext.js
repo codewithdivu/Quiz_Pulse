@@ -127,20 +127,26 @@ function AuthProvider({ children }) {
 
   const login = async (payload) => {
     const response = await axiosPost(apiRouter.LOGIN, payload);
-    const { data } = response;
-    if (!data?.data) {
-      console.log(data.msg);
-      return;
-    }
-    if (data?.data) {
-      setSession(data.accessToken);
-      localStorage.setItem("authUser", JSON.stringify(data.data));
-      dispatch({
-        type: "LOGIN",
-        payload: {
-          user: data.data,
-        },
-      });
+    if (response?.msg === "password is wrong") {
+      return alert("password is wrong");
+    } else if (response?.msg === "there is no user exist for this email") {
+      return alert("you have not registered yet.");
+    } else {
+      const { data } = response;
+      if (!data?.data) {
+        console.log(data.msg);
+        return;
+      }
+      if (data?.data) {
+        setSession(data.accessToken);
+        localStorage.setItem("authUser", JSON.stringify(data.data));
+        dispatch({
+          type: "LOGIN",
+          payload: {
+            user: data.data,
+          },
+        });
+      }
     }
   };
 

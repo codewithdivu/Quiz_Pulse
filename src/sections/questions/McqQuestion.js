@@ -24,8 +24,6 @@ function McqQuestion({ question, selectedOption, handleOptionChange }) {
   const theme = useTheme();
   const md = useMediaQuery(theme.breakpoints.down("md"));
 
-
-
   return (
     <Container>
       <Question>
@@ -36,7 +34,6 @@ function McqQuestion({ question, selectedOption, handleOptionChange }) {
               {question?.question?.type === "image" && (
                 <Box
                   sx={{
-                    // width: "400px",
                     height: "150px",
                     overflow: "hidden",
                     display: "flex",
@@ -57,17 +54,7 @@ function McqQuestion({ question, selectedOption, handleOptionChange }) {
               )}
 
               {question?.question?.type === "text" && (
-                <Box
-                  // sx={{
-                  //   // width: "400px",
-                  //   height: "150px",
-                  //   overflow: "hidden",
-                  //   display: "flex",
-                  //   justifyContent: "center",
-                  //   alignItems: "center",
-                  // }}
-                  className="flex center"
-                >
+                <Box className="flex center">
                   <Typography variant="body2" paragraph>
                     {question?.description}
                   </Typography>

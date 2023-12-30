@@ -18,10 +18,6 @@ const OptionRadio = styled(Radio)(({ theme }) => ({
 
 const OptionLabel = styled(FormControlLabel)(({ theme }) => ({
   marginTop: "1rem",
-  // width: "500px",
-  // width: "auto",
-  // width: "30vw",
-
   "& .MuiTypography-root": {
     whiteSpace: "normal",
   },

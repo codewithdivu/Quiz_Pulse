@@ -36,7 +36,6 @@ const QuizLeaderboard = () => {
     const fetchQuizzes = async () => {
       try {
         const response = await axiosGet(apiRouter.GET_QUIZ_LIST);
-        console.log("responseQuizzes :>> ", response);
         setQuizzes(response?.data?.data);
       } catch (error) {
         console.error("Error fetching quizzes:", error);
@@ -46,7 +45,6 @@ const QuizLeaderboard = () => {
     const fetchUsers = async () => {
       try {
         const response = await axiosGet(apiRouter.GET_ALL_USERS);
-        console.log("responseUsers :>> ", response);
         setUsers(response?.data?.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -56,7 +54,6 @@ const QuizLeaderboard = () => {
     const fetchScores = async () => {
       try {
         const response = await axiosGet(apiRouter.GET_ALL_SCORE);
-        console.log("responseScores :>> ", response);
         setScores(response?.data?.data);
       } catch (error) {
         console.error("Error fetching scores:", error);
@@ -66,7 +63,6 @@ const QuizLeaderboard = () => {
     const fetchFeedback = async () => {
       try {
         const response = await axiosGet(apiRouter.GET_ALL_FEEDBACK);
-        console.log("responseFeedbacks :>> ", response);
         setFeedback(response?.data?.data);
       } catch (error) {
         console.error("Error fetching feedback:", error);
@@ -106,8 +102,10 @@ const QuizLeaderboard = () => {
             score: userScore ? userScore.score : 0,
             maxScore: userScore ? userScore.maxScore : 0,
             percentage: userScore ? userScore.percentage : 0,
-            rating: userFeedback ? userFeedback.rating : 0,
-            comment: userFeedback ? userFeedback.comments : "Not taken",
+            rating: userFeedback ? userFeedback.rating : "null",
+            comment: userFeedback
+              ? userFeedback.comments
+              : "Not given feedback",
           };
 
           combinedData.push(combinedEntry);

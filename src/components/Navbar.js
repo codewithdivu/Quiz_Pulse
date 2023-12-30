@@ -14,7 +14,13 @@ import {
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-const settings = ["Profile", "Dashboard", "Logout"];
+const settings = [
+  "Profile",
+  "Dashboard",
+  "Leaderboard",
+  "Profile Dashboard",
+  "Logout",
+];
 
 function Navbar() {
   const navigate = useNavigate();
@@ -34,6 +40,10 @@ function Navbar() {
       navigate("/dashboard/profile");
     } else if (val === "Dashboard") {
       navigate("/dashboard");
+    } else if (val === "Leaderboard") {
+      navigate("/dashboard/leaderboard");
+    } else if (val === "Profile Dashboard") {
+      navigate("/dashboard/profileDashboard");
     }
   };
 
@@ -44,46 +54,17 @@ function Navbar() {
           disableGutters
           sx={{ display: "flex", justifyContent: "space-between" }}
         >
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            // href="#app-bar-with-responsive-menu"
+          <img
+            src="/logo/normalLogo.png"
+            alt="LOGO"
             onClick={() => navigate("/dashboard")}
-            sx={{
-              mr: 2,
+            style={{
+              height: "2rem",
+              width: "9rem",
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              color: "inherit",
-              textDecoration: "none",
-              color: "black",
               cursor: "pointer",
             }}
-          >
-            QuizPulse
-          </Typography>
-
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            // href="#app-bar-with-responsive-menu"
-            onClick={() => navigate("/dashboard")}
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              color: "inherit",
-              textDecoration: "none",
-              color: "black",
-              cursor: "pointer",
-            }}
-          >
-            QuizPulse
-          </Typography>
+          />
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">

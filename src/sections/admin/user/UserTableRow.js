@@ -14,8 +14,6 @@ const UserTableRow = ({ row, isItemSelected, handleClick }) => {
   const labelId = `enhanced-table-checkbox-${row._id}`;
   const navigate = useNavigate();
 
-  // console.log("row?.profile_pic :>> ", row?.profile_pic);
-
   return (
     <TableRow
       hover

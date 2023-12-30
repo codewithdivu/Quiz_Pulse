@@ -32,6 +32,7 @@ export const apiRouter = {
   GET_QUIZ_FEEDBACK: "/feedback/quiz/:quizId",
   GET_FEEDBACK: "/feedback/:id",
   GET_USER_FEEDBACK: "/feedback/user/:userId",
+  GET_ALL_FEEDBACK: "/feedback",
   // during submitting each question response
   SUBMIT_QUESTION: "/submitQuestion/:questionId",
   // final quiz submitting
@@ -39,4 +40,5 @@ export const apiRouter = {
   // score
   GET_SCORE: "/score/:quizId/:userId",
   GET_USER_SCORE: "/score/:userId",
+  GET_ALL_SCORE: "/score",
 };

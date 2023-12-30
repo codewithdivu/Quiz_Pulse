@@ -51,9 +51,15 @@ const QuizDashboard = () => {
         </Typography>
         <Button
           variant="outlined"
-          onClick={() => navigate("/dashboard/profileDashboard")}
+          onClick={() => navigate("/dashboard/leaderboard")}
         >
           Leaderboard
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/dashboard/profileDashboard")}
+        >
+          Profile Dashboard
         </Button>
       </Box>
       <Grid container spacing={3} sx={{ marginTop: "2rem" }}>

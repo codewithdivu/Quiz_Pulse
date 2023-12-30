@@ -38,4 +38,5 @@ export const apiRouter = {
   FINAL_QUIZ_SUBMIT: "/finalSubmit/:quizId/:userId",
   // score
   GET_SCORE: "/score/:quizId/:userId",
+  GET_USER_SCORE: "/score/:userId",
 };

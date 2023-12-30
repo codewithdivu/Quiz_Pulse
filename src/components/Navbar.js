@@ -32,6 +32,8 @@ function Navbar() {
       navigate("/auth/login");
     } else if (val === "Profile") {
       navigate("/dashboard/profile");
+    } else if (val === "Dashboard") {
+      navigate("/dashboard");
     }
   };
 
@@ -46,7 +48,8 @@ function Navbar() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            // href="#app-bar-with-responsive-menu"
+            onClick={() => navigate("/dashboard")}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -55,6 +58,7 @@ function Navbar() {
               color: "inherit",
               textDecoration: "none",
               color: "black",
+              cursor: "pointer",
             }}
           >
             QuizPulse
@@ -64,7 +68,8 @@ function Navbar() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            // href="#app-bar-with-responsive-menu"
+            onClick={() => navigate("/dashboard")}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -74,6 +79,7 @@ function Navbar() {
               color: "inherit",
               textDecoration: "none",
               color: "black",
+              cursor: "pointer",
             }}
           >
             QuizPulse

@@ -24,6 +24,7 @@ import QuizPage from "../pages/dashboard/quiz/QuizPage";
 import QuizResult from "../pages/dashboard/quiz/QuizResult";
 import Profile from "../pages/dashboard/profile/Profile";
 import UserList from "../pages/admin/dashboard/user/UserList";
+import ProfilesDashboard from "../pages/dashboard/profile/ProfilesDashboard";
 
 export const router = createBrowserRouter([
   { path: "*", element: <Navigate to="/not-found" replace /> },
@@ -94,6 +95,10 @@ export const router = createBrowserRouter([
       },
       { path: "home", element: <QuizDashboard /> },
       { path: "profile", element: <Profile /> },
+      {
+        path: "profileDashboard",
+        element: <ProfilesDashboard />,
+      },
 
       {
         path: "test/:quizId",

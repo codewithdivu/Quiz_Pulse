@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import McqQuestion from "../../sections/questions/McqQuestion";
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -37,6 +37,25 @@ const QuizDashboard = () => {
 
   return (
     <Container>
+      <Box
+        sx={{
+          marginTop: "1rem",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Quizzes
+        </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/dashboard/profileDashboard")}
+        >
+          Leaderboard
+        </Button>
+      </Box>
       <Grid container spacing={3} sx={{ marginTop: "2rem" }}>
         {quizzes &&
           quizzes?.length > 0 &&

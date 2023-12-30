@@ -170,6 +170,7 @@ const CreateQuestion = () => {
       console.log("QuestionResponse :>> ", response);
       reset();
       setIsLoading(false);
+      navigate("/admin/question/list");
     } catch (error) {
       console.log("questionCreateError :>> ", error);
       setIsLoading(false);

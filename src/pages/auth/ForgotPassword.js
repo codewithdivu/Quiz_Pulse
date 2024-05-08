@@ -67,6 +67,12 @@ const ForgotPassword = () => {
     setIsLoading(true);
     try {
       const response = await axiosPost(apiRouter.FORGOT_PASSWORD, { ...data });
+      if (response.status === 404) {
+        setIsLoading(false);
+        reset();
+        return alert("There is no user with this email...");
+      }
+      localStorage.setItem("email", data?.email);
       setIsLoading(false);
       navigate("/auth/reset-password");
     } catch (error) {

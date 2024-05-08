@@ -52,11 +52,6 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = yup.object().shape({
-    email: yup
-      .string()
-      .email("Email must be a valid email address")
-      .required("Email is required")
-      .trim("Enter valid email address"),
     password: yup
       .string()
       .required("Password is required")
@@ -116,7 +111,6 @@ const ResetPassword = () => {
   const onSubmit = async (data) => {
     console.log("reset-data :>> ", data);
     const {
-      email,
       password,
       confirmPassword,
       digit1,
@@ -130,16 +124,34 @@ const ResetPassword = () => {
     let newOtp = +otp;
 
     const newData = {
-      email,
+      // email,
       newPassword: confirmPassword,
       otp: newOtp,
     };
+    const email = localStorage.getItem("email");
     console.log("newData :>> ", newData);
     setIsLoading(true);
     try {
       const response = await axiosPost(apiRouter.RESET_PASSWORD, {
         ...newData,
+        email,
       });
+      console.log("response :>> ", response);
+      if (
+        response.success == false &&
+        response.msg === "Please provide email, OTP, and a new password."
+      ) {
+        setIsLoading(false);
+        return alert("please provide otp and new password");
+      }
+      if (response.success == false && response.msg === "User not found") {
+        setIsLoading(false);
+        return alert("there is no user with this email");
+      }
+      if (response.success == false && response.msg === "Invalid OTP") {
+        setIsLoading(false);
+        return alert("please enter valid OTP");
+      }
       setIsLoading(false);
       navigate("/auth/login");
     } catch (error) {
@@ -175,14 +187,14 @@ const ResetPassword = () => {
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>
-              <TextField
+              {/* <TextField
                 label="Email"
                 type="text"
                 {...register("email")}
                 error={!!errors.email}
                 helperText={errors.email?.message}
                 fullWidth
-              />
+              /> */}
               <TextField
                 label="Password"
                 {...register("password")}

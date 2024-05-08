@@ -114,7 +114,7 @@ const CreateQuestion = () => {
       category: currentQuestion?.category || "",
       tags: currentQuestion?.tags || [],
       description: currentQuestion?.description || "",
-      points: currentQuestion?.points || 0,
+      points: currentQuestion?.points || "",
       question: {
         type: currentQuestion?.question?.type || "",
         text: currentQuestion?.question?.text || "",
@@ -217,7 +217,7 @@ const CreateQuestion = () => {
                 margin="normal"
               >
                 <MenuItem value="text">Text</MenuItem>
-                <MenuItem value="image">Image</MenuItem>
+                {/* <MenuItem value="image">Image</MenuItem> */}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -254,7 +254,7 @@ const CreateQuestion = () => {
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
               <FormControl fullWidth margin="normal">
-                <InputLabel>Tags</InputLabel>
+                <InputLabel id="demo-simple-select-label">Tags</InputLabel>
                 <Controller
                   name="tags"
                   control={control}
@@ -263,6 +263,9 @@ const CreateQuestion = () => {
                     <Select
                       {...field}
                       multiple
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Tags"
                       error={!!errors.tags}
                       renderValue={(selected) => (
                         <div>
@@ -290,6 +293,8 @@ const CreateQuestion = () => {
                 helperText={errors.description?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -301,6 +306,8 @@ const CreateQuestion = () => {
                 helperText={errors.points?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
 
@@ -315,7 +322,7 @@ const CreateQuestion = () => {
                 margin="normal"
               >
                 <MenuItem value="text">Text</MenuItem>
-                <MenuItem value="image">Image</MenuItem>
+                {/* <MenuItem value="image">Image</MenuItem> */}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -326,6 +333,8 @@ const CreateQuestion = () => {
                 helperText={errors.question?.text?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -336,6 +345,8 @@ const CreateQuestion = () => {
                 helperText={errors.correct_answer?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}></Grid>
@@ -357,7 +368,7 @@ const CreateQuestion = () => {
                     margin="normal"
                   >
                     <MenuItem value="text">Text</MenuItem>
-                    <MenuItem value="image">Image</MenuItem>
+                    {/* <MenuItem value="image">Image</MenuItem> */}
                   </TextField>
                 </Grid>
                 <Grid item xs={12} sm={12} md={5.5}>
@@ -368,6 +379,7 @@ const CreateQuestion = () => {
                     helperText={errors?.options?.[index]?.text?.message}
                     fullWidth
                     margin="normal"
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} md={1}>

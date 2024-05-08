@@ -29,7 +29,10 @@ const ProfilesDashboard = () => {
       setIsLoading(true);
       try {
         const res = await axiosGet(apiRouter.GET_ALL_USERS);
-        setUserProfiles(res?.data?.data);
+        const user = JSON.parse(localStorage.getItem("authUser"));
+        const users = res?.data?.data.filter((item) => item._id === user._id);
+        // setUserProfiles(res?.data?.data);
+        setUserProfiles(users);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);

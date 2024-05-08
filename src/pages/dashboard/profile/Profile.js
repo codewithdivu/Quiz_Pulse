@@ -60,7 +60,12 @@ const Profile = () => {
     const file = event.target.files[0];
 
     if (file) {
-      if (file.size <= 2 * 1024 * 1024) {
+      const fileSize = file.size / 1024 / 1024;
+
+      if (
+        (file.type === "image/png" || file.type === "image/jpeg") &&
+        fileSize <= 2
+      ) {
         setLoading(true);
         setTimeout(() => {
           //   setSelectedFile(URL.createObjectURL(file));
@@ -68,7 +73,9 @@ const Profile = () => {
           setLoading(false);
         }, 1000);
       } else {
-        alert("File size exceeds the limit of 2 MB.");
+        alert("Please upload a PNG or JPG image file less than 2 MB.");
+        event.target.value = null;
+        setSelectedFile(null);
       }
     }
   };
@@ -78,11 +85,19 @@ const Profile = () => {
   };
 
   const schema = yup.object().shape({
-    email: yup.string().email("Invalid email").required("Email is required"),
-    username: yup.string().required("Username is required"),
-    phoneNumber: yup.string(),
-    firstname: yup.string(),
-    lastname: yup.string(),
+    email: yup.string().email("Invalid email"),
+    // .required("Email is required"),
+    username: yup
+      .string()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username must not exceed 20 characters"),
+    // .required("Username is required"),
+    phoneNumber: yup
+      .string()
+      .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+      .nullable(),
+    firstname: yup.string().max(20, "Firstname must not exceed 20 characters"),
+    lastname: yup.string().max(20, "Lastname must not exceed 20 characters"),
   });
 
   const defaultValues = useMemo(
@@ -149,7 +164,7 @@ const Profile = () => {
         <Grid container spacing={3} sx={{ marginTop: "2rem" }}>
           <Grid item xs={12} sm={12} md={12}>
             <StyledContainer>
-              <InputLabel>Profile Picture</InputLabel>
+              <InputLabel required>Profile Picture</InputLabel>
               <StyledCircle onClick={handleCircleClick}>
                 {loading ? (
                   <CircularProgress
@@ -198,7 +213,7 @@ const Profile = () => {
           <Grid item xs={12} sm={12} md={6}>
             <TextField
               label="Phone Number"
-              type="text"
+              type="number"
               {...register("phoneNumber")}
               error={!!errors.phoneNumber}
               helperText={errors.phoneNumber?.message}

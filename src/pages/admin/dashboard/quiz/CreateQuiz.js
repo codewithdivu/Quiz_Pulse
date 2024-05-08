@@ -103,17 +103,26 @@ const CreateQuiz = () => {
   }, [choosenCategory]);
 
   const schema = yup.object().shape({
-    title: yup.string().required("Title is required"),
+    title: yup
+      .string()
+      .required("Title is required")
+      .min(5, "Title must be at least 5 characters")
+      .max(50, "Title must not exceed 50 characters"),
     difficultyLevel: yup.string().required("Difficulty level is required"),
     questions: yup
       .array()
       .of(yup.string())
       .min(1, "Select at least one question"),
-    description: yup.string().required("Description is required"),
+    description: yup
+      .string()
+      .required("Description is required")
+      .min(10, "Description must be at least 10 characters")
+      .max(500, "Description must not exceed 500 characters"),
     duration: yup
       .number()
       .required("Duration is required")
-      .positive("Duration must be a positive number"),
+      .positive("Duration must be a positive number")
+      .max(300, "Duration must not exceed 300 minutes"),
     isActive: yup.boolean().required("isActive is required"),
   });
 
@@ -123,7 +132,7 @@ const CreateQuiz = () => {
       description: currentQuiz?.description || "",
       difficultyLevel: currentQuiz?.difficultyLevel || "",
       questions: currentQuiz?.questions || [],
-      duration: currentQuiz?.duration || 0,
+      duration: currentQuiz?.duration || "",
       isActive: currentQuiz?.isActive || false,
     }),
     [isEdit, currentQuiz, id]
@@ -235,6 +244,8 @@ const CreateQuiz = () => {
                 helperText={errors.title?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -245,13 +256,20 @@ const CreateQuiz = () => {
                 helperText={errors.description?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
               <FormControl fullWidth margin="normal">
-                <InputLabel>Difficulty Level</InputLabel>
+                <InputLabel id="demo-simple-select-label">
+                  Difficulty Level
+                </InputLabel>
                 <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
                   {...register("difficultyLevel")}
+                  label="DifficultyLevel"
                   error={!!errors.difficultyLevel}
                   defaultValue=""
                 >
@@ -274,6 +292,8 @@ const CreateQuiz = () => {
                 helperText={errors.duration?.message}
                 fullWidth
                 margin="normal"
+                InputLabelProps={{ shrink: true }}  
+
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>

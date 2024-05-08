@@ -73,16 +73,25 @@ const Register = () => {
   const navigate = useNavigate();
 
   const validationSchema = yup.object().shape({
-    username: yup.string().required("username is required"),
+    username: yup
+      .string()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username must not exceed 20 characters")
+      .required("Username is required"),
     email: yup
       .string()
       .email("Email must be a valid email address")
       .required("Email is required")
-      .trim("Enter valid email address"),
+      .trim()
+      .max(255, "Email must not exceed 255 characters"),
     password: yup
       .string()
       .required("Password is required")
-      .trim("Enter valid password"),
+      .trim()
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long"
+      ),
   });
 
   const defaultValues = {
